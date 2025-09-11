@@ -11,6 +11,9 @@
 		"installMaven": "false",
 		"installGradle": "true"
 	  },
+	    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+          "version": "latest"
+        },
 	  "ghcr.io/devcontainers-contrib/features/ant-sdkman:2": {}
 	},
   

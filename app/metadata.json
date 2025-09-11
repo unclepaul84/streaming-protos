@@ -1,0 +1,8 @@
+{
+    "indexes": [{
+        "file": "symbol.index",
+        "description": "Symbol based search. Example: AAPL100",
+        "field": "price.name"
+    }],
+    "tags":[{"name": "pillar", "value": "risk"}]
+}
