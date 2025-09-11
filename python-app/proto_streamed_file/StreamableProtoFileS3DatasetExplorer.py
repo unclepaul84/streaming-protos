@@ -2,7 +2,25 @@ import boto3
 
 
 class StreamableProtoFileS3DatasetExplorer:
+    """
+    S3-based dataset explorer for streamable protobuf file datasets.
+    
+    Provides functionality to explore, validate, and retrieve metadata about 
+    protobuf datasets stored in S3 buckets. Each dataset is expected to have
+    a metadata.json file describing indexes and tags, along with associated
+    data and index files.
+    """
     def __init__(self, bucket: str, s3_client=None):
+        """
+        Initialize the dataset explorer.
+        
+        Args:
+            bucket (str): S3 bucket name containing the datasets
+            s3_client: Boto3 S3 client instance (required)
+            
+        Raises:
+            ValueError: If s3_client is not provided
+        """
         self.bucket = bucket
         if s3_client is None:
             raise ValueError("s3_client must be provided")
@@ -42,9 +60,14 @@ class StreamableProtoFileS3DatasetExplorer:
 
     def get_dataset_descriptor(self, prefix: str):
         """
-        1. Retrieve dataset descriptor from metadata.json in the given prefix.
-        2. Get names, sizes, and create dates of all files in the given prefix.
-        3. Return a dictionary with metadata and file details.
+        Retrieve complete dataset information including metadata and file listings.
+        
+        Args:
+            prefix (str): S3 prefix/path containing the dataset
+            
+        Returns:
+            dict: Dictionary containing 'metadata' (from metadata.json) and 'files' 
+                  (list of file details with name, size, and last_modified)
         """
         import json
         try:
@@ -80,7 +103,13 @@ class StreamableProtoFileS3DatasetExplorer:
         
     def get_index_descriptors(self, prefix: str):
         """
-        Retrieve index descriptors from metadata.json in the given prefix.
+        Retrieve index information from dataset metadata.
+        
+        Args:
+            prefix (str): S3 prefix/path containing the dataset
+            
+        Returns:
+            list: List of index descriptors from metadata.json
         """
         import json
         try:
@@ -94,9 +123,16 @@ class StreamableProtoFileS3DatasetExplorer:
 
     def is_dataset_ready(self, prefix: str) -> bool:
         """
-        1. Check if a dataset is ready by verifying the presence of 'metadata.json' in the given prefix.
-        2. Validate 'metadata.json' against a predefined schema.
-        3. Check that number of files in the prefix is equal to 2 + number of index files specified in metadata.json.
+        Validate dataset completeness and schema compliance.
+        
+        Checks for metadata.json presence, validates against schema, and verifies
+        expected file count (2 base files + index files).
+        
+        Args:
+            prefix (str): S3 prefix/path containing the dataset
+            
+        Returns:
+            bool: True if dataset is complete and valid
         """
         import json
         try:
@@ -144,6 +180,15 @@ class StreamableProtoFileS3DatasetExplorer:
             return False
 
     def list_datasets(self, prefix: str = ""):
+        """
+        Discover available datasets in the S3 bucket.
+        
+        Args:
+            prefix (str): Optional prefix to filter dataset search
+            
+        Yields:
+            str: Dataset prefix paths (directories containing metadata.json)
+        """
         paginator = self.s3_client.get_paginator("list_objects_v2")
         page_iterator = paginator.paginate(Bucket=self.bucket, Prefix=prefix)
 
