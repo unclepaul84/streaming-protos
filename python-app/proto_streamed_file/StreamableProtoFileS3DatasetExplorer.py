@@ -40,6 +40,44 @@ class StreamableProtoFileS3DatasetExplorer:
             "required": ["indexes", "tags"]
         }
 
+    def get_dataset_descriptor(self, prefix: str):
+        """
+        1. Retrieve dataset descriptor from metadata.json in the given prefix.
+        2. Get names, sizes, and create dates of all files in the given prefix.
+        3. Return a dictionary with metadata and file details.
+        """
+        import json
+        try:
+            # 1. Retrieve metadata.json
+            response = self.s3_client.get_object(Bucket=self.bucket, Key=f"{prefix}/metadata.json")
+            metadata_content = response['Body'].read().decode('utf-8')
+            metadata = json.loads(metadata_content)
+
+            # 2. List all files in the prefix (excluding subfolders)
+            paginator = self.s3_client.get_paginator("list_objects_v2")
+            page_iterator = paginator.paginate(Bucket=self.bucket, Prefix=prefix)
+            files = []
+            for page in page_iterator:
+                if "Contents" in page:
+                    for obj in page["Contents"]:
+                        key = obj["Key"]
+                        # Only include files directly under the prefix (not in subfolders)
+                        if key.startswith(prefix) and key[len(prefix):].count("/") <= 1:
+                            files.append({
+                                "name": key[len(prefix):].lstrip("/"),
+                                "size": obj.get("Size"),
+                                "last_modified": obj.get("LastModified").isoformat() if obj.get("LastModified") else None
+                            })
+
+            # 3. Return combined dictionary
+            return {
+                "metadata": metadata,
+                "files": files
+            }
+        except Exception as e:
+            print(f"Error retrieving dataset descriptor: {e}")
+            return {}
+        
     def get_index_descriptors(self, prefix: str):
         """
         Retrieve index descriptors from metadata.json in the given prefix.

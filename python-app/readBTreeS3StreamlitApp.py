@@ -32,8 +32,6 @@ s3_client = boto3.client(
 # S3 bucket name
 bucket = "large-proto-files"
 
-
-
 # Create dataset explorer for the S3 bucket
 explorer = StreamableProtoFileS3DatasetExplorer(bucket=bucket, s3_client=s3_client)
 
@@ -56,6 +54,8 @@ if not explorer.is_dataset_ready(dataset_choice):
 # Get index descriptors for the selected dataset
 index_descriptors = explorer.get_index_descriptors(dataset_choice)
 
+with st.expander("Descriptor"):
+    st.json(explorer.get_dataset_descriptor(dataset_choice))
 # Streamlit dropdown to select index file
 index_choice = st.selectbox(
     "Choose index",
@@ -78,7 +78,7 @@ selected_index = next((idx for idx in index_descriptors if idx["file"] == index_
 # Open the proto file parser for the selected dataset
 with StreamableProtoFileS3Parser(bucket, f"{prefix}data.binpb", PricesStreamedFileHeader, PricesStreamedFilePayload, s3_client) as parser:
     header = parser.getHeader()  # Read file header
-    badge_placeholder = st.empty()  # Placeholder for timing badge
+   
     seach_term = st.text_input(f"{selected_index['description']}", value="AAPL100")  # User search input
 
     start_time = time.time()
@@ -88,12 +88,13 @@ with StreamableProtoFileS3Parser(bucket, f"{prefix}data.binpb", PricesStreamedFi
         offset = int.from_bytes(value, byteorder="big")  # Convert bytes to offset
         payload = parser.getPayloadAtOffset(offset)  # Get payload at offset
         end_time = time.time()
-        badge_placeholder.badge(f"{end_time - start_time:.6f} seconds", color="green")  # Show search time
+        
         for p in payload.price.prices:
             prices.append(p)  # Collect prices
 
     # Display results in a table if found
     if prices:
+        st.badge(f"Search time: {end_time - start_time:.6f} seconds", color="green")  # Show search time
         st.write(f'Prices for {payload.price.name}:')
         df = pd.DataFrame(prices)
         st.dataframe(df)
