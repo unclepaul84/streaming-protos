@@ -3,6 +3,10 @@
         "file": "symbol.index",
         "description": "Symbol based search. Example: AAPL100",
         "field": "price.name"
+    },{
+        "file": "symbol.index",
+        "description": "Symbol based search. Example: AAPL1000",
+        "field": "price.name"
     }],
     "tags":[{"name": "pillar", "value": "risk"}]
 }
