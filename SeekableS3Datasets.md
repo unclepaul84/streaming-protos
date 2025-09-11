@@ -68,7 +68,7 @@ JSON file containing dataset configuration and index definitions.
 
 ## Metadata Schema
 
-### Required Structure
+### Example Structure
 
 ```json
 {
@@ -137,7 +137,7 @@ JSON file containing dataset configuration and index definitions.
       }
     }
   },
-  "required": ["indexes",  "tags"]
+  "required": ["indexes"]
 }
 ```
 
