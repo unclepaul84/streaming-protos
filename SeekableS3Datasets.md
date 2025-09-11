@@ -123,8 +123,7 @@ JSON file containing dataset configuration and index definitions.
       "type": "object",
       "properties": {
         "records": { "type": "integer" }
-      },
-      "required": ["records"]
+      }
     },
     "tags": {
       "type": "array", 
@@ -138,7 +137,7 @@ JSON file containing dataset configuration and index definitions.
       }
     }
   },
-  "required": ["indexes", "data", "tags"]
+  "required": ["indexes",  "tags"]
 }
 ```
 

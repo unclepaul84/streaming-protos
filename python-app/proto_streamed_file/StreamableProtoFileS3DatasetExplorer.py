@@ -47,8 +47,8 @@ class StreamableProtoFileS3DatasetExplorer:
                     "type": "object",
                     "properties": {
                         "records": { "type": "integer" }
-                    },
-                    "required": ["records"]
+                    }
+                    
                 },
                 "tags": {
                     "type": "array",
@@ -62,7 +62,7 @@ class StreamableProtoFileS3DatasetExplorer:
                     }
                 }
             },
-            "required": ["indexes", "data", "tags"]
+            "required": ["indexes",  "tags"]
         }
 
     def get_dataset_descriptor(self, prefix: str):
@@ -160,10 +160,7 @@ class StreamableProtoFileS3DatasetExplorer:
 
             # 3. Check file count: 2 + number of index files (metadata.json, data file, index files)
             expected_file_count = 2 + len(metadata.get("indexes", []))
-            # Optionally, could check that 'data' property exists and has 'records'
-            if "data" not in metadata or "records" not in metadata["data"]:
-                print("Missing 'data' or 'records' in metadata.json")
-                return False
+         
 
             # List all files in the prefix
             paginator = self.s3_client.get_paginator("list_objects_v2")
