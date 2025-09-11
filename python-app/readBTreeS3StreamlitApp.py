@@ -79,12 +79,12 @@ selected_index = next((idx for idx in index_descriptors if idx["file"] == index_
 with StreamableProtoFileS3Parser(bucket, f"{prefix}data.binpb", PricesStreamedFileHeader, PricesStreamedFilePayload, s3_client) as parser:
     header = parser.getHeader()  # Read file header
    
-    seach_term = st.text_input(f"{selected_index['description']}", value="AAPL100")  # User search input
+    search_term = st.text_input(f"{selected_index['description']}. Field: {selected_index['field']}", value="AAPL100")  # User search input
 
     start_time = time.time()
     prices = []
     # Search for the term in the B+Tree index
-    for value in tree.search(seach_term.encode("utf-8")):
+    for value in tree.search(search_term.encode("utf-8")):
         offset = int.from_bytes(value, byteorder="big")  # Convert bytes to offset
         payload = parser.getPayloadAtOffset(offset)  # Get payload at offset
         end_time = time.time()
