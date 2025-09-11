@@ -7,8 +7,8 @@ class StreamableProtoFileS3DatasetExplorer:
     
     Provides functionality to explore, validate, and retrieve metadata about 
     protobuf datasets stored in S3 buckets. Each dataset is expected to have
-    a metadata.json file describing indexes and tags, along with associated
-    data and index files.
+    a metadata.json file describing indexes, tags, and data properties (such as record count),
+    along with associated data and index files.
     """
     def __init__(self, bucket: str, s3_client=None):
         """
@@ -26,7 +26,7 @@ class StreamableProtoFileS3DatasetExplorer:
             raise ValueError("s3_client must be provided")
         else:
             self.s3_client = s3_client
-        # JSON schema for metadata.json
+        # JSON schema for metadata.json (updated to include 'data' property)
         self._metadata_schema = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
@@ -43,6 +43,13 @@ class StreamableProtoFileS3DatasetExplorer:
                         "required": ["file", "description", "field"]
                     }
                 },
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "records": { "type": "integer" }
+                    },
+                    "required": ["records"]
+                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -55,19 +62,19 @@ class StreamableProtoFileS3DatasetExplorer:
                     }
                 }
             },
-            "required": ["indexes", "tags"]
+            "required": ["indexes", "data", "tags"]
         }
 
     def get_dataset_descriptor(self, prefix: str):
         """
         Retrieve complete dataset information including metadata and file listings.
+        The metadata will include 'indexes', 'tags', and 'data' (e.g., record count).
         
         Args:
             prefix (str): S3 prefix/path containing the dataset
-            
         Returns:
-            dict: Dictionary containing 'metadata' (from metadata.json) and 'files' 
-                  (list of file details with name, size, and last_modified)
+            dict: Dictionary containing 'metadata' (from metadata.json, including 'data'),
+                  and 'files' (list of file details with name, size, and last_modified)
         """
         import json
         try:
@@ -125,12 +132,11 @@ class StreamableProtoFileS3DatasetExplorer:
         """
         Validate dataset completeness and schema compliance.
         
-        Checks for metadata.json presence, validates against schema, and verifies
-        expected file count (2 base files + index files).
+        Checks for metadata.json presence, validates against updated schema (including 'data'),
+        and verifies expected file count (2 base files + index files).
         
         Args:
             prefix (str): S3 prefix/path containing the dataset
-            
         Returns:
             bool: True if dataset is complete and valid
         """
@@ -141,7 +147,7 @@ class StreamableProtoFileS3DatasetExplorer:
             metadata_content = response['Body'].read().decode('utf-8')
             metadata = json.loads(metadata_content)
 
-            # 2. Validate metadata.json against schema
+            # 2. Validate metadata.json against updated schema
             try:
                 import jsonschema
                 jsonschema.validate(instance=metadata, schema=self._metadata_schema)
@@ -152,9 +158,12 @@ class StreamableProtoFileS3DatasetExplorer:
                 print(f"Schema validation error: {ve}")
                 return False
 
-            # 3. Check file count: 2 + number of index files
-            # 2 files: metadata.json and data file (assumed to be present)
+            # 3. Check file count: 2 + number of index files (metadata.json, data file, index files)
             expected_file_count = 2 + len(metadata.get("indexes", []))
+            # Optionally, could check that 'data' property exists and has 'records'
+            if "data" not in metadata or "records" not in metadata["data"]:
+                print("Missing 'data' or 'records' in metadata.json")
+                return False
 
             # List all files in the prefix
             paginator = self.s3_client.get_paginator("list_objects_v2")

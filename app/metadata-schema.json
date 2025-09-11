@@ -14,6 +14,12 @@
         "required": ["file", "description", "field"]
       }
     },
+    "data": {
+      "type": "object",
+      "properties": {
+        "records": { "type": "integer" }
+      }
+    },
     "tags": {
       "type": "array",
       "items": {

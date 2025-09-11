@@ -8,5 +8,6 @@
         "description": "Symbol based search. Example: AAPL1000",
         "field": "price.name"
     }],
+    "data": { "records": 10000 },
     "tags":[{"name": "pillar", "value": "risk"}]
 }

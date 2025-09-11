@@ -84,6 +84,9 @@ JSON file containing dataset configuration and index definitions.
       "field": "price.date"
     }
   ],
+  "data": {
+    "records": 10000
+  },
   "tags": [
     {
       "name": "pillar",
@@ -116,6 +119,13 @@ JSON file containing dataset configuration and index definitions.
         "required": ["file", "description", "field"]
       }
     },
+    "data": {
+      "type": "object",
+      "properties": {
+        "records": { "type": "integer" }
+      },
+      "required": ["records"]
+    },
     "tags": {
       "type": "array", 
       "items": {
@@ -128,7 +138,7 @@ JSON file containing dataset configuration and index definitions.
       }
     }
   },
-  "required": ["indexes", "tags"]
+  "required": ["indexes", "data", "tags"]
 }
 ```
 
@@ -138,6 +148,9 @@ JSON file containing dataset configuration and index definitions.
 - `file`: Name of the index file (e.g., "symbol.index")
 - `description`: Human-readable description with usage examples
 - `field`: Dot-notation path to the indexed protobuf field (e.g., "price.name")
+
+**Data Object:**
+- `records`: Number of records in the dataset (integer) (OPTIONAL)
 
 **Tags Array:**
 - `name`: Tag name for categorization/filtering
