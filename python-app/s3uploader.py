@@ -40,34 +40,39 @@ def upload_file_to_minio(file_path, bucket_name, object_name=None, endpoint_url=
 		return False
 
 if __name__ == "__main__":
-    upload_file_to_minio(
-		file_path="../app/name.index",
+
+	#generate todays date in YYYY-MM-DD format
+	todays_date = __import__('datetime').datetime.now().strftime("%Y-%m-%d")
+	new_guid = __import__('uuid').uuid4()
+
+	upload_file_to_minio(
+		file_path="../app/symbol.index",
 		bucket_name="large-proto-files",
-		object_name="/xfer/2020-01-09/RISK_SCENARIOS,1,0,EOD,2025-09-10, 7e7da23a-c235-4769-b268-d5a1b9b4542f~proto_risk~5.0.0.binpb/symbol.index",
+		object_name=f"/xfer/{todays_date}/RISK_SCENARIOS,1,0,EOD,{todays_date},{new_guid}~proto_risk~5.0.0.binpb/symbol.index",
 		endpoint_url="http://localhost:9000",
 		access_key="minioadmin",
 		secret_key="minioadmin",
 		region_name="us-east-1",
 	)
 	
-    '''import argparse
-	parser = argparse.ArgumentParser(description="Upload a file to MinIO (S3 compatible)")
-	parser.add_argument("file_path", help="Path to the file to upload")
-	parser.add_argument("bucket_name", help="Bucket name")
-	parser.add_argument("--object_name", help="Object name in bucket (default: basename of file)")
-	parser.add_argument("--endpoint_url", required=True, help="MinIO endpoint URL, e.g. http://localhost:9000")
-	parser.add_argument("--access_key", required=True, help="MinIO access key")
-	parser.add_argument("--secret_key", required=True, help="MinIO secret key")
-	parser.add_argument("--region_name", default="us-east-1", help="AWS region (default: us-east-1)")
-	args = parser.parse_args()
-
+	
 	upload_file_to_minio(
-		file_path=args.file_path,
-		bucket_name=args.bucket_name,
-		object_name=args.object_name,
-		endpoint_url=args.endpoint_url,
-		access_key=args.access_key,
-		secret_key=args.secret_key,
-		region_name=args.region_name,
-	)    '''	
+		file_path="../app/data.binpb",
+		bucket_name="large-proto-files",
+		object_name=f"/xfer/{todays_date}/RISK_SCENARIOS,1,0,EOD,{todays_date},{new_guid}~proto_risk~5.0.0.binpb/data.binpb",
+		endpoint_url="http://localhost:9000",
+		access_key="minioadmin",
+		secret_key="minioadmin",
+		region_name="us-east-1",
+	)
+
 		
+	upload_file_to_minio(
+		file_path="../app/metadata.json",
+		bucket_name="large-proto-files",
+		object_name=f"/xfer/{todays_date}/RISK_SCENARIOS,1,0,EOD,{todays_date},{new_guid}~proto_risk~5.0.0.binpb/metadata.json",
+		endpoint_url="http://localhost:9000",
+		access_key="minioadmin",
+		secret_key="minioadmin",
+		region_name="us-east-1",
+	)

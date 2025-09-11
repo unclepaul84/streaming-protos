@@ -166,11 +166,18 @@ public class App {
 
         String baseFolder = "";
 
-        String write_File = baseFolder + "price_entities_java_indexed.binpb";
-        String read_File = baseFolder + "price_entities_java_indexed.binpb";
-        String index_File = baseFolder + "name.index";
+        String write_File = baseFolder + "data.binpb";
+        String read_File = baseFolder + "data.binpb";
+        String index_File = baseFolder + "symbol.index";
         int num_items = 1000;
 
+        MetadataJsonWriter metadata = new MetadataJsonWriter();
+        List<MetadataJsonWriter.Index> indexes = new ArrayList<>();
+        indexes.add(new MetadataJsonWriter.Index("symbol.index", "search by symbol (e.x AAPL100)", "prices.name"));
+        metadata.setIndexes(indexes);
+        metadata.setData(new MetadataJsonWriter.Data(num_items));
+
+        
         System.out.println("creating index file at: " + index_File);
 
         java.io.File indexFile = new java.io.File(index_File);
@@ -240,7 +247,7 @@ public class App {
 
             totalBytesWritten += bytesWritten;
         }
-
+        metadata.writeToFile(baseFolder + "metadata.json");
         writer.close();
 
         StreamableProtoFileParser<PricesStreamedFileHeaderOuterClass.PricesStreamedFileHeader, PricesStreamedFilePayloadOuterClass.PricesStreamedFilePayload> parser = null;

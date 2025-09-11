@@ -62,7 +62,7 @@ class StreamableProtoFileS3DatasetExplorer:
                     }
                 }
             },
-            "required": ["indexes",  "tags"]
+            "required": ["indexes"]
         }
 
     def get_dataset_descriptor(self, prefix: str):

@@ -151,7 +151,7 @@ JSON file containing dataset configuration and index definitions.
 **Data Object:**
 - `records`: Number of records in the dataset (integer) (OPTIONAL)
 
-**Tags Array:**
+**Tags Array:** (OPTIONAL)
 - `name`: Tag name for categorization/filtering
 - `value`: Tag value for identification
 

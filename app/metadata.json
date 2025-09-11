@@ -1,13 +1,6 @@
 {
-    "indexes": [{
-        "file": "symbol.index",
-        "description": "Symbol based search. Example: AAPL100",
-        "field": "price.name"
-    },{
-        "file": "symbol.index",
-        "description": "Symbol based search. Example: AAPL1000",
-        "field": "price.name"
-    }],
-    "data": { "records": 10000 },
-    "tags":[{"name": "pillar", "value": "risk"}]
+  "indexes": [
+    {"file": "symbol.index", "description": "search by symbol (e.x AAPL100)", "field": "prices.name"}
+  ],
+  "data": {"records": 1000}
 }
