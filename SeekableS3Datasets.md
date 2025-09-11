@@ -282,7 +282,11 @@ with StreamableProtoFileS3Parser(bucket, "prices-2024-01-15/data.binpb",
 - **Writers**: StreamableProtoFileWriter (Python)
 
 ## Example Applications
+
 [Sample Streamlit App](python-app/readBTreeS3StreamlitApp.py)
+
+<img width="1225" height="867" alt="image" src="https://github.com/user-attachments/assets/d9097513-85ae-4103-98eb-52261588d42c" />
+
 
 
 This specification provides a complete framework for organizing, validating, and accessing streaming protobuf datasets in S3 with efficient random access capabilities.
