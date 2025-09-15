@@ -26,7 +26,7 @@ bucket/
 s3://my-bucket/
 ├── xfer/
 │   └── 2024-01-10/
-│       └── RISK_SCENARIOS,1,0,EOD,2024-01-10,uuid~proto_risk~5.0.0.binpb/
+│       └── RISK_SCENARIOS,1,0,EOD,2024-01-10,uuid~proto_risk~5.0.0/
 │           ├── metadata.json
 │           ├── data.binpb
 │           └── symbol.index
